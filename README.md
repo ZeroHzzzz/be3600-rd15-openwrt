@@ -104,7 +104,7 @@ GigaDevice GD5F1GM7REYIG（128 B OOB，8-bit ECC）。这些批次的 PHY 地址
 - `docs/`、`README.md`：CC BY-SA 4.0
 - `scripts/`：MIT
 
-详见 [LICENSE.md](LICENSE.md)。
+详见 [LICENSE](LICENSE)。
 
 ## 致谢
 
