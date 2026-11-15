@@ -1,0 +1,47 @@
+--- a/target/linux/qualcommbe/dts/ipq5332-xiaomi-rd15.dts
++++ b/target/linux/qualcommbe/dts/ipq5332-xiaomi-rd15.dts
+@@ -257,6 +260,19 @@
+ 	reset-delay-us = <10000>;
+ 	reset-post-delay-us = <100000>;
+ 
++	/* Stage A: identify the YT8821 at MDIO 0x07 (2.5G PHY).  Do not reset
++	 * it separately: GPIO51 already resets the whole MDIO bus, and an
++	 * extra reset would disturb the YT9215S switch behind the LAN ports.
++	 */
++	yt8821: ethernet-phy@7 {
++		reg = <7>;
++	};
++
++	/* This unit has the QCA8081 variant at MDIO 0x0c. */
++	qca8081: ethernet-phy@c {
++		reg = <0x0c>;
++	};
++
+ 	/* The MDIO bus also carries a Motorcomm YT8821 2.5G PHY at 0x07
+ 	 * (id 0x4f51ea19, read on stock); 0x0c is empty on this unit. Not
+ 	 * described yet: the 2.5G port is reported faulty and stays unused.
+@@ -341,6 +357,24 @@
+ 		 * in the first test; the PPE error path then oopsed.
+ 		 */
+ 
++		/* 2.5G jack: QCA8081 at MDIO 0x0c, SGMII to PPE port 1. */
++		ppe_port1: port@1 {
++			reg = <1>;
++			phy-mode = "sgmii";
++			managed = "in-band-status";
++			label = "eth1";
++			phy-handle = <&qca8081>;
++			pcs-handle = <&pcs0_ch0>;
++			clocks = <&nsscc NSS_CC_PORT1_MAC_CLK>,
++				 <&nsscc NSS_CC_PORT1_RX_CLK>,
++				 <&nsscc NSS_CC_PORT1_TX_CLK>;
++			clock-names = "mac", "rx", "tx";
++			resets = <&nsscc NSS_CC_PORT1_MAC_CLK_ARES>,
++				 <&nsscc NSS_CC_PORT1_RX_CLK_ARES>,
++				 <&nsscc NSS_CC_PORT1_TX_CLK_ARES>;
++			reset-names = "mac", "rx", "tx";
++		};
++
+ 		/* Stock: port_id 2, forced-speed 2500 full duplex, to YT9215S */
+ 		ppe_port2: port@2 {
+ 			reg = <2>;

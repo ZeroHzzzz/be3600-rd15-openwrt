@@ -1,0 +1,11 @@
+--- a/target/linux/qualcommbe/dts/ipq5332-xiaomi-rd15.dts
++++ b/target/linux/qualcommbe/dts/ipq5332-xiaomi-rd15.dts
+@@ -43,7 +46,7 @@
+ 		/* Stock U-Boot passes "ubi.mtd=rootfs root=mtd:ubi_rootfs ...";
+ 		 * the later root= wins. clk_ignore_unused as stock.
+ 		 */
+-		bootargs-append = " ubi.block=0,ubi_rootfs root=/dev/ubiblock0_1 clk_ignore_unused";
++		bootargs-append = " ubi.mtd=rootfs ubi.block=0,ubi_rootfs root=/dev/ubiblock0_1 clk_ignore_unused";
+ 	};
+ 
+ 	leds {
