@@ -207,4 +207,3 @@ sh scripts/install-slot0.sh <kernel.itb> <kernel.sha256> \
 - 槽 1 原厂固件保持未动；`flag_boot_rootfs` 的切换在这台机器上没验证成功
 - 2.5G 口 `eth1` 工作，1000Mbps（PC 侧只有 1G），桥接进 LAN
 - Wi-Fi 驱动正常，AP 尚未启用
-- 没有 WAN 上游，NTP 无法同步

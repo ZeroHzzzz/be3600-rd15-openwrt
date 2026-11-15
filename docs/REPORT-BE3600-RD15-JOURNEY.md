@@ -231,7 +231,6 @@ ubiattach -m 19 -d 0              # 成功
 
 - 2.5G 速率未实测（PC 只有 1G）
 - Wi-Fi AP 未配置
-- 无 WAN 上游，NTP 不同步
 - sysupgrade 脚本不更新 kernel 卷（需修）
 - `flag_boot_rootfs` 切换未验证
 
