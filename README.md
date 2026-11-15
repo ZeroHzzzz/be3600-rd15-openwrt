@@ -98,6 +98,14 @@ GigaDevice GD5F1GM7REYIG（128 B OOB，8-bit ECC）。这些批次的 PHY 地址
 - [过程和结论](docs/REPORT-BE3600-RD15-JOURNEY.md)
 - [设备数据与复现方法](docs/RD15-REPRODUCTION-AND-BUG.md)
 
+## 许可证
+
+- `patches/`：GPL-2.0（与所修改的内核代码一致）
+- `docs/`、`README.md`：CC BY-SA 4.0
+- `scripts/`：MIT
+
+详见 [LICENSE.md](LICENSE.md)。
+
 ## 致谢
 
 - 移植基础：[victorpivotto-cloud/openwrt-xiaomi-be3600-rd15](https://github.com/victorpivotto-cloud/openwrt-xiaomi-be3600-rd15)
