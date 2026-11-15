@@ -1,0 +1,30 @@
+From: Md Sadre Alam <md.alam@oss.qualcomm.com>
+Date: Fri, 7 Aug 2026 06:43:39 +0000
+Subject: [PATCH] mtd: spinand: winbond: add support for W25N01KW
+
+Upstream entry for the Winbond W25N01KW (JEDEC 0xef 0xbe 0x21),
+which some Xiaomi BE3600 2.5G (RD15) batches use instead of the
+GigaDevice part the original port was tested with. The W25N01KW
+shares geometry, OOB layout and ECC status handling with W25N01KV;
+QPIC-SNAND supports only 4-bit or 8-bit ECC, hence the 4-bit request.
+
+Signed-off-by: Md Sadre Alam <md.alam@oss.qualcomm.com>
+
+--- a/drivers/mtd/nand/spi/winbond.c
++++ b/drivers/mtd/nand/spi/winbond.c
+@@ -526,6 +526,15 @@
+ 					      &update_cache_variants),
+ 		     0,
+ 		     SPINAND_ECCINFO(&w25n02kv_ooblayout, w25n02kv_ecc_get_status)),
++	SPINAND_INFO("W25N01KW", /* 1.8V */
++		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xbe, 0x21),
++		     NAND_MEMORG(1, 2048, 64, 64, 1024, 20, 1, 1, 1),
++		     NAND_ECCREQ(4, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&w25n01kv_ooblayout, w25n02kv_ecc_get_status)),
+ 	/* 4G-bit densities */
+ 	SPINAND_INFO("W25N04KV", /* 3.3V */
+ 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xaa, 0x23),

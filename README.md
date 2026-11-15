@@ -97,6 +97,7 @@ GigaDevice GD5F1GM7REYIG（128 B OOB，8-bit ECC）。这些批次的 PHY 地址
 - [解锁原厂 SSH](docs/SSH-UNLOCK.md)：刷机前置步骤，含登录与命令注入原理
 - [过程和结论](docs/REPORT-BE3600-RD15-JOURNEY.md)
 - [设备数据与复现方法](docs/RD15-REPRODUCTION-AND-BUG.md)
+- [构建说明](BUILD.md)：源码版本、补丁顺序、配置和产物对应关系
 
 ## 许可证
 

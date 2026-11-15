@@ -8,7 +8,7 @@
 | `rd15-kernel-uImage.itb` | 4.5 MB | 内核 FIT，写进 kernel 卷 |
 | `rd15-root.squashfs` | 12 MB | rootfs，写进 rootfs 卷 |
 | `rd15-sysupgrade.bin` | 16 MB | 从正在运行的 OpenWrt 升级 |
-| `rd15-factory.ubi` | 17 MB | 完整 UBI 镜像（kernel + rootfs），用 `ubiformat` 写；未实测 |
+| `rd15-factory.ubi` | 17 MB | 完整 UBI 镜像（kernel + rootfs），**不推荐**，见下 |
 
 ## 装到槽 0（验证过的路径）
 
@@ -38,8 +38,13 @@ ubiupdatevol /dev/ubi0_0 rd15-kernel-uImage.itb
 sync && reboot
 ```
 
-## factory.ubi
+## factory.ubi（不推荐）
 
-`rd15-factory.ubi` 是完整的 UBI 镜像，里面已经包含 kernel 和 rootfs 两个卷，
-理论上可以用 `ubiformat /dev/mtd19 -f rd15-factory.ubi` 一次写整个分区。
-我们没在这台机器上实测过这条路径，用之前务必确认串口可用、并备份好槽 1。
+`rd15-factory.ubi` 可以用 `ubiformat /dev/mtd19 -f rd15-factory.ubi` 写入并启动，
+但实测有两个问题：
+
+- 镜像里的内核 FIT 与 `rd15-kernel-uImage.itb` 不是同一个（sha 不同）
+- rootfs 卷名是 `rootfs`，不是系统使用的 `ubi_rootfs`
+
+启动后 PPE 起不来（没有 `eth0`/`eth1`）。恢复时要把卷名改回 `ubi_rootfs`
+再重装，或者直接用 `rd15-initramfs` + `install-slot0.sh`。

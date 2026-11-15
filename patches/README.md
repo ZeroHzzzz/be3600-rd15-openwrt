@@ -52,6 +52,12 @@ cp ../patches/0001-spi-qpic-snand-ecc-program.patch \
 
 QCA8081 不加 `in-band-status` 会出现链路 up 但 RX 恒为 0。
 
+## 0005-winbond-w25n01kw.patch
+
+给 `drivers/mtd/nand/spi/winbond.c` 增加 W25N01KW 条目（JEDEC `0xef 0xbe 0x21`）。
+部分 RD15 批次用这颗 Winbond，和移植作者那台的 GigaDevice 不同。几何、OOB
+布局和 ECC 状态沿用 W25N01KV 的定义，ECC 请求为 4-bit/512 B。
+
 ## 0004-dts-ubi-bootargs.patch
 
 `bootargs` 里加 `ubi.mtd=rootfs`，安装好的系统启动时能自动挂上 ubi0。
