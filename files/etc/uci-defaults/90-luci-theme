@@ -1,4 +1,4 @@
 #!/bin/sh
-uci -q set luci.main.mediaurlbase='/luci-static/openwrt2020'
+uci -q set luci.main.mediaurlbase='/luci-static/material'
 uci -q commit luci
 exit 0

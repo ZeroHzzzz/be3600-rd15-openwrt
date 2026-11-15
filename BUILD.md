@@ -41,7 +41,7 @@ LuCI 的 feed 需要先拉下来：
 ./scripts/feeds install -p packages cgi-io
 ```
 
-默认主题用构建树里的 `files/` 目录：
+默认主题（material）用构建树里的 `files/` 目录：
 
 ```sh
 mkdir -p files/etc/uci-defaults
