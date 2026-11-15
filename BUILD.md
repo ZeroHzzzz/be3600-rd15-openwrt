@@ -100,3 +100,20 @@ grep -a -c 'QPIC EXECSEEN' build_dir/*/linux-*/Image    # 应为 0
   共同决定；原厂固件启动时会把这些变量改成槽 1。需要回到槽 0 时，在
   OpenWrt/RAM 里用 `fw_setenv`（`/etc/fw_env.config` 写
   `/dev/mtd13 0x0 0x10000 0x10000`）改回，或 U-Boot 里 `setenv`。
+
+## 启动槽位（重要）
+
+原厂 U-Boot 的 `bootmiwifi` 用 `miwifi_bootargs` 决定从哪个槽启动，而不是
+`bootargs`。原厂固件启动时会把 `miwifi_bootargs`、`flag_boot_rootfs` 等改回
+槽 1（`rootfs_1`），所以装好 OpenWrt 后如果自动启动进了原厂系统，需要手动引导。
+
+在 U-Boot 里（串口，`bootdelay=15`）执行：
+
+```
+ubi part nand0,0
+ubi read 0x47000000 kernel
+bootm 0x47000000#config@mi04.1-c2
+```
+
+会直接从槽 0 的 UBI `kernel` 卷读出 FIT 并启动 OpenWrt。实测这条路径稳定。
+把这三条设成 `bootcmd` 并 `saveenv` 有时会被原厂逻辑覆盖，所以建议保留串口。
