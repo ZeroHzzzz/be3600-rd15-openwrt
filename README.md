@@ -79,8 +79,6 @@ sh scripts/install-slot0.sh <kernel.itb> <sha256> <root.squashfs> <sha256>
 
 - [全过程记录](docs/REPORT-BE3600-RD15-JOURNEY.md)
 - [复现与 bug 说明](docs/RD15-REPRODUCTION-AND-BUG.md)
-- [逐条实验证据](docs/RE-FINDINGS-20261114.md)
-- [阶段结论](docs/SESSION-RESULT-20261114.md)
 
 ## 上游与致谢
 

@@ -77,16 +77,12 @@
 | 写命令 `0x7`（OP_PAGE_PROGRAM_WITH_ECC） | OOB 出现 ECC，raw 读回 0 差异 |
 | U-Boot 读内核写页 | crc 一致 → 写路径标准 |
 
-### 5.2 读路径（多次失败）
+### 5.2 读路径：排除法
 
-| 实验 | 结果 |
-| --- | --- |
-| ECC 强度 4/8 位 | 无效 |
-| OOB 布局（12 B/cw） | 与 U-Boot 一致，仍失败 |
-| 清 `ECC_PARITY_RS`、bit31 | 无效 |
-| 不写 `NAND_EBI2_ECC_BUF_CFG` | 无效 |
-| `NAND_AUTO_STATUS_EN` | 无效 |
-| 尝试 quad/`0xeb` | 无效 |
+ECC 强度（4/8 位）、OOB 布局、`ECC_PARITY_RS`、`AUTO_STATUS_EN`、
+quad 读等方向逐一排除后，问题仍指向"芯片片内 ECC 未被关闭"。
+关键证据是写路径：改用 `OP_PAGE_PROGRAM_WITH_ECC (0x7)` 后 OOB 才出现 ECC，
+而 U-Boot 能正确读取内核写入的页，说明 flash 上的数据本身是对的。
 
 ### 5.3 根因
 
@@ -247,13 +243,13 @@ ubiattach -m 19 -d 0              # 成功
 
 | 文件 | 说明 |
 | --- | --- |
-| `patches/0001-spi-qpic-snand-program-with-ecc.patch` | 驱动修复 |
-| `rd15-build/target/linux/qualcommbe/patches-6.18/2041-*.patch` | 同上的正式内核补丁 |
-| `rd15-build/.../9991-net-qualcomm-ppe-fix-port-init-unwind.patch` | PPE 错误路径 |
-| `images/rd15-fixed-*.itb / .bin / .squashfs` | 可用镜像 |
-| `RE-FINDINGS-20261114.md` | 逐条实验证据 |
-| `SESSION-RESULT-20261114.md` | 阶段结论 |
-| `RD15-REPRODUCTION-AND-BUG.md` | 复现与 bug 说明 |
+| `patches/0001-spi-qpic-snand-ecc-program.patch` | 驱动修复（SET_FEATURE 顺序 + 0x7） |
+| `patches/0002-ppe-port-init-unwind.patch` | PPE 错误路径 |
+| `patches/0003-dts-2p5g-port.patch` | DTS 2.5G 端口 |
+| `patches/0004-dts-ubi-bootargs.patch` | 启动参数 |
+| `scripts/` | 安装、RAM 引导、串口工具 |
+| `images/SHA256SUMS` | 镜像校验值（二进制见 Releases） |
+| `docs/RD15-REPRODUCTION-AND-BUG.md` | 复现与 bug 说明 |
 
 ## 12. 上游贡献建议
 
