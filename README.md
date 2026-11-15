@@ -98,6 +98,12 @@ GigaDevice GD5F1GM7REYIG（128 B OOB，8-bit ECC）。这些批次的 PHY 地址
 - [过程和结论](docs/REPORT-BE3600-RD15-JOURNEY.md)
 - [设备数据与复现方法](docs/RD15-REPRODUCTION-AND-BUG.md)
 
+## 致谢
+
+- 移植基础：[victorpivotto-cloud/openwrt-xiaomi-be3600-rd15](https://github.com/victorpivotto-cloud/openwrt-xiaomi-be3600-rd15)
+- Linux 内核：`drivers/spi/spi-qpic-snand.c`、`drivers/net/phy/qcom/qca808x.c`、`drivers/net/ethernet/qualcomm/ppe`
+- SSH 解锁思路参考：[xmir-patcher](https://github.com/openwrt-xiaomi/xmir-patcher)
+
 ## 注意事项
 
 刷机有风险。操作前备份 `APPSBL`、`APPSBLENV`、`ART` 分区，并确保串口可用。
