@@ -66,10 +66,10 @@ Release 里的文件名和构建产物对应关系：
 | `rd15-initramfs-uImage.itb` | `openwrt-qualcommbe-ipq53xx-xiaomi_rd15-initramfs-uImage.itb` |
 | `rd15-kernel-uImage.itb` | `build_dir/.../qualcommbe_ipq53xx/xiaomi_rd15-uImage.itb` |
 | `rd15-root.squashfs` | `build_dir/.../qualcommbe_ipq53xx/root.squashfs` |
-| `rd15-sysupgrade.bin` | `openwrt-...-squashfs-sysupgrade.bin` |
-| `rd15-factory.ubi` | `openwrt-...-squashfs-factory.ubi` |
 
-校验值见 `images/SHA256SUMS`。
+
+校验值见 `images/SHA256SUMS`。Release 只发布上面三个验证过的文件；
+`sysupgrade` 和 `factory.ubi` 还在验证，暂不提供。
 
 ## 关于调试输出
 
