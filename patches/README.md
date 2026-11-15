@@ -1,47 +1,58 @@
 # 补丁说明
 
-所有补丁相对 **移植作者的 openwrt 树（qualcommbe / Linux 6.18.39）**。
+以下补丁都基于移植作者的 OpenWrt 树（qualcommbe 目标，Linux 6.18.39）。
+
+## 怎么用
+
+补丁不是独立程序，要套在移植作者的树
+（`victorpivotto-cloud/openwrt-xiaomi-be3600-rd15`）上：
+
+```sh
+# 0003、0004 改 DTS，在 openwrt-tree 根目录打
+cd openwrt-tree
+patch -p1 < ../patches/0003-dts-2p5g-port.patch
+patch -p1 < ../patches/0004-dts-ubi-bootargs.patch
+
+# 0001、0002 是内核补丁，放进 patches-6.18/ 由构建系统自动应用
+cp ../patches/0001-spi-qpic-snand-ecc-program.patch \
+   ../patches/0002-ppe-port-init-unwind.patch \
+   target/linux/qualcommbe/patches-6.18/
+
+# 然后照常 make
+```
+
+也可以直接用 Release 里的镜像，不需要打补丁。
 
 ## 0001-spi-qpic-snand-ecc-program.patch
 
-`drivers/spi/spi-qpic-snand.c`：
+改 `drivers/spi/spi-qpic-snand.c`：
 
-1. `SPINAND_SET_FEATURE`：feature 值在 `FLASH_CMD` 之前写入
-   `NAND_FLASH_FEATURES`（根因修复）
-2. `SPINAND_PROGRAM_EXECUTE`：`OP_PROGRAM_PAGE` → `OP_PAGE_PROGRAM_WITH_ECC (0x7)`
-3. 移除 3 处 `NAND_EBI2_ECC_BUF_CFG` 写入
+- `SPINAND_SET_FEATURE` 的 feature 值改在 `FLASH_CMD` 之前写入
+- 写命令用 `OP_PAGE_PROGRAM_WITH_ECC (0x7)`
+- 去掉 `NAND_EBI2_ECC_BUF_CFG` 的写入
 
-### 与上游的关系（重要）
-
-- Linux **6.18.y 稳定版已包含第 1 项修复**，且不写 `ECC_BUF_CFG`；
-  但它仍使用 `OP_PROGRAM_PAGE (0x6)`。
-- 本补丁中的 `0x7` 是我们在这台机器上验证可用的组合；
-  **尚未单独验证**"仅同步 6.18.y + 保留 0x6"是否也正常。
-- 因此向上游提交时，建议：
-  1. 优先让目标树同步 6.18.y 的驱动改动（第 1、3 项）
-  2. 若 0x6 仍不生成 ECC，再把 0x7 作为独立修复提交，
-     并附上 QPIC 寄存器/cfg1 的证据
+和上游的关系：Linux 6.18.y 已经有"先写 feature"和去掉 `ECC_BUF_CFG` 的改动，
+但写命令仍然是 `0x6`。这里的 `0x7` 是这台机器上验证过的组合；"只同步 6.18.y、
+保留 `0x6`"还没有单独测过。
 
 ## 0002-ppe-port-init-unwind.patch
 
-`drivers/net/ethernet/qualcomm/ppe/ppe_port.c`：
-
-修复 `ppe_port_mac_init()` 失败路径的越界访问（`i--` 到 -1）。
-2.5G 口（PPE port1）初始化失败时会触发，属预防性修复。
+`ppe_port.c` 里 `ppe_port_mac_init()` 的失败路径有问题：`edma_port_setup()`
+失败时 `i` 会先减到 -1，后面的清理循环再按负数下标访问越界。2.5G 口初始化
+失败时会走到这里。
 
 ## 0003-dts-2p5g-port.patch
 
-`target/linux/qualcommbe/dts/ipq5332-xiaomi-rd15.dts`：
+`ipq5332-xiaomi-rd15.dts`：
 
-- `&mdio` 下增加 `ethernet-phy@c`（QCA8081）与 `ethernet-phy@7`（YT8821 探测）
-- `&qcom_ppe` 增加 `port@1`：
-  `phy-mode = "sgmii"` + **`managed = "in-band-status"`** +
-  `pcs-handle = <&pcs0_ch0>` + PORT1 时钟/复位
+- `&mdio` 增加 `ethernet-phy@c`（本机的 QCA8081），另加 `ethernet-phy@7`
+  供 YT8821 批次探测
+- `&qcom_ppe` 增加 `port@1`：`sgmii` + `managed = "in-band-status"` +
+  `pcs0_ch0` + PORT1 的时钟和复位
 
-注意：QCA8081 必须用 `in-band-status`，否则 RX 恒为 0。
-不同批次（YT8821）需另测。
+QCA8081 不加 `in-band-status` 会出现链路 up 但 RX 恒为 0。
 
 ## 0004-dts-ubi-bootargs.patch
 
-在 `bootargs-append` 中加入 `ubi.mtd=rootfs`，让内核自动挂载
-`ubi0`（安装系统需要）。仅影响启动参数，不影响 flash 内容。
+`bootargs` 里加 `ubi.mtd=rootfs`，安装好的系统启动时能自动挂上 ubi0。
+只影响启动参数，不动 flash。

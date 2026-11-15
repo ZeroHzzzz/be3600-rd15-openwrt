@@ -1,0 +1,2 @@
+requests>=2.20
+pexpect>=4.8

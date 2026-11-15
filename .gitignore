@@ -1,2 +1,5 @@
 images/*
 !images/SHA256SUMS
+!images/README.md
+__pycache__/
+*.pyc
