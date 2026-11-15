@@ -1,6 +1,7 @@
 # 镜像
 
-二进制在 GitHub Releases，这个目录只放校验值。
+二进制作为 Release 附件发布（`v0.2.0`），这个目录只放 `SHA256SUMS`，
+Release 里也会附一份同样的校验文件。
 
 | 文件 | 大小 | 用途 |
 | --- | --- | --- |
@@ -19,6 +20,19 @@ sh scripts/install-slot0.sh rd15-kernel-uImage.itb <kernel.sha256> \
 ```
 
 输出 `INSTALL_OK` 表示写入并回读校验通过。
+
+## 装完之后
+
+如果重启后自动进了原厂系统，是 U-Boot 的槽位选择被原厂逻辑改回槽 1 了。
+在串口 U-Boot 里执行：
+
+```
+ubi part nand0,0
+ubi read 0x47000000 kernel
+bootm 0x47000000#config@mi04.1-c2
+```
+
+就会从槽 0 启动 OpenWrt。详见 `BUILD.md` 的「启动槽位」。
 
 ## 为什么没有 sysupgrade / factory
 

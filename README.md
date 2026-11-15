@@ -80,14 +80,17 @@ GigaDevice GD5F1GM7REYIG（128 B OOB，8-bit ECC）。这些批次的 PHY 地址
 | `rd15-initramfs-uImage.itb` | TFTP RAM 引导，用于测试、恢复和安装 |
 | `rd15-kernel-uImage.itb` | 内核 FIT，写入 kernel 卷 |
 | `rd15-root.squashfs` | rootfs，写入 rootfs 卷 |
-| `rd15-sysupgrade.bin` | 从运行中的 OpenWrt 升级 |
-| `rd15-factory.ubi` | 完整 UBI 镜像，供 `ubiformat` 使用，未实测 |
+| `SHA256SUMS` | 上面三个文件的校验值 |
 
 验证过的安装流程：TFTP 引导 initramfs，执行 `scripts/install-slot0.sh` 将
 内核和 rootfs 写入槽 0，输出 `INSTALL_OK` 表示写入并回读校验通过。
 
-从 RAM 系统执行 `sysupgrade` 时 kernel 卷不会更新，需要手动
-`ubiupdatevol /dev/ubi0_0 <kernel>`，详见 `images/README.md`。
+`sysupgrade` 和 `factory.ubi` 暂不提供：前者从 RAM 执行时不会更新内核卷，
+后者实测卷名和内核 FIT 不一致，启动后网口起不来。详见 `images/README.md`。
+
+如果重启后自动进了原厂系统，用串口在 U-Boot 里执行
+`ubi part nand0,0`、`ubi read 0x47000000 kernel`、
+`bootm 0x47000000#config@mi04.1-c2` 从槽 0 启动，说明见 `BUILD.md`。
 
 自行编译时，将 `patches/` 应用到移植作者的 OpenWrt 树，说明见
 [patches/README.md](patches/README.md)。
